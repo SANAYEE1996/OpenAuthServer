@@ -30,6 +30,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("io.ktor:ktor-server-status-pages")
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
 }

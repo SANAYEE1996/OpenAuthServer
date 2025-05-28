@@ -12,7 +12,7 @@ import openAuthServer.config.getConfigProperty
 fun Application.configureSecurity() {
     authentication {
         oauth("auth-oauth-google") {
-            urlProvider = { "http://localhost:8080/callback" }
+            urlProvider = { "http://localhost:3600/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",

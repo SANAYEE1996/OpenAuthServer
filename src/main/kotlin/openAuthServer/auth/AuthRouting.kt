@@ -19,6 +19,7 @@ import openAuthServer.common.getSuccessResponse
 
 fun Application.authRouting() {
     val httpClient = HttpClient()
+    val service = AuthService()
 
     routing {
         authenticate("auth-oauth-google") {
@@ -36,7 +37,9 @@ fun Application.authRouting() {
                             header(HttpHeaders.Authorization, "Bearer $accessToken")
                         }.body()
 
-                    call.respond(getSuccessResponse(userInfo))
+                    val result:GoogleUserInfo? = service.addTicket(userInfo)
+
+                    call.respond(getSuccessResponse(result))
                 } else {
                     call.respond(getFailResponse("Authenticate-Fail"))
                 }
