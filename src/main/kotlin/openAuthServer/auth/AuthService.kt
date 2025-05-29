@@ -16,7 +16,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import openAuthServer.config.getConfigProperty
 
-class AuthService(){
+class AuthService {
 
     private val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -56,7 +56,7 @@ class AuthService(){
 
     private suspend fun addUser(data: UserInfo) : UserInfo? {
         if(repository.findUser(data.email.orEmpty()) != null){
-            return data;
+            return data
         }
         return repository.insertUser(data)
     }

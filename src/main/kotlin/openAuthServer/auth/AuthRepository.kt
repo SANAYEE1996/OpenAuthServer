@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
-class AuthRepository(){
+class AuthRepository {
     private fun resultRowToArticle(row: ResultRow) = UserInfo(
         sub = row[User.sub],
         email = row[User.email],
