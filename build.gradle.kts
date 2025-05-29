@@ -1,8 +1,11 @@
-val exposed_version: String by project
+val exposedVersion: String by project
+val mySqlVersion: String by project
+val ktorVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.22"
     id("io.ktor.plugin") version "2.3.5"
+    kotlin("plugin.serialization") version "1.9.22"
     id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 }
 
@@ -28,8 +31,13 @@ dependencies {
     implementation("io.ktor:ktor-server-cors")
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.4.14")
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.5")
+    implementation("io.ktor:ktor-client-cio:2.3.5")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
+    implementation("mysql:mysql-connector-java:$mySqlVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("io.ktor:ktor-server-status-pages")
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
