@@ -37,7 +37,7 @@ class AuthService {
                         "code" to code,
                         "client_id" to getConfigProperty("oauth.client-id"),
                         "client_secret" to getConfigProperty("oauth.client-secret"),
-                        "redirect_uri" to "http://localhost:3600/google-oauth2/callback",
+                        "redirect_uri" to "http://localhost:4000/google-oauth2/callback",
                         "grant_type" to "authorization_code",
                     ).formUrlEncode()
                 )
