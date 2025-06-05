@@ -16,8 +16,8 @@ class AuthRepository {
     suspend fun insertUser(data: UserInfo) : UserInfo ? = DatabaseConfig.dbQuery {
         val insertStatement = User.insert {
             it[sub] = data.sub.orEmpty()
-            it[email] = data.email.orEmpty()
-            it[name] = data.name.orEmpty()
+            it[email] = data.email
+            it[name] = data.name
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToArticle)
     }

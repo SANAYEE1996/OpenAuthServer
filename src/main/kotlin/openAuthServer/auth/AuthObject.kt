@@ -7,6 +7,9 @@ import org.jetbrains.exposed.sql.Table
 data class AuthLoginRequestDto(val type: String, val code: String)
 
 @Serializable
+data class RefreshTokenExtendRequestDto(val token: String)
+
+@Serializable
 data class GoogleTokenResponse(
     val access_token: String,
     val expires_in: Int,
@@ -19,8 +22,8 @@ data class GoogleTokenResponse(
 @Serializable
 data class UserInfo(
     val sub: String?,
-    val name: String?,
-    val email: String?,
+    val name: String,
+    val email: String,
     val picture: String?,
 )
 
@@ -28,7 +31,7 @@ data class UserInfo(
 data class GoogleUserInfo(
     val sub: String,
     val name: String?,
-    val email: String?,
+    val email: String,
     val picture: String?,
 )
 

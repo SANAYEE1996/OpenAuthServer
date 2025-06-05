@@ -1,5 +1,8 @@
 package openAuthServer.auth
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTDecodeException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -15,6 +18,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import openAuthServer.config.getConfigProperty
+import java.util.Date
 
 class AuthService {
 
@@ -28,7 +32,7 @@ class AuthService {
 
     private val repository: AuthRepository = AuthRepository()
 
-    suspend fun getUserInfo(code: String, type: String): UserInfo?{
+    suspend fun login(code: String, type: String): Pair<String, String>{
         if(type == "GOOGLE"){
             val tokenResponse: GoogleTokenResponse = httpClient.post("https://oauth2.googleapis.com/token") {
                 contentType(ContentType.Application.FormUrlEncoded)
@@ -47,15 +51,41 @@ class AuthService {
                 header(HttpHeaders.Authorization, "Bearer ${tokenResponse.access_token}")
             }.body()
 
-            val userInfo = UserInfo(googleUserInfo.sub, googleUserInfo.name, googleUserInfo.email, googleUserInfo.picture)
-
-            return addUser(userInfo)
+            return getJwtToken(UserInfo(googleUserInfo.sub, googleUserInfo.name ?: run{""}, googleUserInfo.email, googleUserInfo.picture))
         }
-        return UserInfo("", "", "", "")
+        throw RuntimeException("Type Must Be 'Google'")
+    }
+
+    suspend fun getExtendAccessToken(requestRefreshToken: String): String{
+        val decodedJWT = JWT.require(Algorithm.HMAC256(getConfigProperty("jwt.secret")))
+            .build()
+            .verify(requestRefreshToken)
+
+        val userInfo: UserInfo = Json.decodeFromString(decodedJWT.getClaim("userInfo").asString())
+        if(repository.findUser(userInfo.email) != null){
+            val userInfoString: String = Json.encodeToString(userInfo)
+            return getJwtToken(userInfoString, 30 * 60 * 1000)
+        }
+        throw JWTDecodeException("Invalid Token")
+    }
+
+    private suspend fun getJwtToken(param : UserInfo): Pair<String, String>{
+        val user = addUser(param)
+        val userInfoString: String = Json.encodeToString(user)
+        return Pair(getJwtToken(userInfoString, 30 * 60 * 1000), getJwtToken(userInfoString, 60 * 60 * 1000))
+    }
+
+    private fun getJwtToken(userInfoString: String, expiredTime: Int): String{
+        return JWT.create()
+            .withAudience("TICKET-API-GATEWAY")
+            .withIssuer("OPEN-AUTH-SERVER")
+            .withClaim("userInfo", userInfoString)
+            .withExpiresAt(Date(System.currentTimeMillis() + expiredTime))
+            .sign(Algorithm.HMAC256(getConfigProperty("jwt.secret")))
     }
 
     private suspend fun addUser(data: UserInfo) : UserInfo? {
-        if(repository.findUser(data.email.orEmpty()) != null){
+        if(repository.findUser(data.email) != null){
             return data
         }
         return repository.insertUser(data)

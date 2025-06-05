@@ -1,7 +1,9 @@
 package openAuthServer
 
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.get
@@ -12,8 +14,8 @@ import openAuthServer.config.DatabaseConfig
 import openAuthServer.config.configureHTTP
 import openAuthServer.config.configureStatusPages
 
-fun main(args: Array<String>) {
-    io.ktor.server.netty.EngineMain.main(args)
+fun main() {
+    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
@@ -21,17 +23,17 @@ fun Application.module() {
     configureHTTP()
     configureStatusPages()
     logging()
-    configureRouting()
     authConfig()
+    configureRouting()
 }
 
 fun Application.configureRouting() {
-    routing {
-        get("/") {
-            call.respondText("Ticket Page")
-        }
-    }
     routing{
+        authenticate("AuthServer-JWT"){
+            get("/api/v1/user-list") {
+                call.respondText("Ticket Page")
+            }
+        }
         authRouting()
     }
 }
