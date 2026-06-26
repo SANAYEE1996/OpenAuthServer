@@ -7,16 +7,19 @@ import openAuthServer.common.OAuthProviderType
 class AuthService (
     val repository: AuthRepository,
     val jwtService: JwtService,
-    providers: List<OAuthProvider>
+    val googleService: OAuthGoogleService,
+    val naverService: OAuthNaverService,
+    val kakaoService: OAuthKakaoService,
 ){
 
-    private val providerRegistry: Map<OAuthProviderType, OAuthProvider> =
-        providers.associateBy { it.providerType }
-
     suspend fun login(code: String, type: OAuthProviderType): TokenPair{
-        val providerService = providerRegistry[type]
-            ?: throw IllegalStateException("${type.name} 서비스 구현체가 존재하지 않습니다.")
-        val oauthUserInfo: OAuthUserInfo = providerService.getUserInfo(code)
+
+        val oauthUserInfo: OAuthUserInfo = when(type){
+            OAuthProviderType.GOOGLE -> googleService.getUserInfo(code)
+            OAuthProviderType.NAVER -> naverService.getUserInfo(code)
+            OAuthProviderType.KAKAO -> kakaoService.getUserInfo(code)
+        }
+
         return jwtService.getNewJwtToken(
             UserInfo(
                 "",

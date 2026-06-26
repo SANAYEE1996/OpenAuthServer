@@ -12,15 +12,13 @@ import openAuthServer.config.GoogleOauthConfig
 class OAuthGoogleService(
     private val config: GoogleOauthConfig,
     private val httpClient: HttpClient
-):OAuthProvider {
+) {
 
-    override val providerType = OAuthProviderType.GOOGLE
-
-    override suspend fun getUserInfo(code: String): OAuthUserInfo {
+    suspend fun getUserInfo(code: String): OAuthUserInfo {
         val accessResponse = getGoogleAccessResponse(code)
         val userInfoResponse = getGoogleUserInfo(accessResponse.accessToken)
         return OAuthUserInfo(
-            providerType.name,
+            OAuthProviderType.GOOGLE.name,
             userInfoResponse.sub,
             userInfoResponse.email,
             userInfoResponse.name

@@ -8,8 +8,11 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import openAuthServer.common.OAuthProviderType
 import openAuthServer.common.getSuccessResponse
+import org.koin.core.context.GlobalContext
 
-fun Route.authRouting(authService: AuthService) {
+fun Route.authRouting() {
+
+    val authService = GlobalContext.get().get<AuthService>()
 
     route("/api/v1/auth"){
         post("/{provider}/login"){

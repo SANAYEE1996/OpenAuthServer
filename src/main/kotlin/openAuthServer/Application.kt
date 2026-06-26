@@ -2,8 +2,6 @@ package openAuthServer
 
 import io.ktor.server.application.Application
 import io.ktor.server.netty.EngineMain
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import openAuthServer.config.configureDatabases
 import openAuthServer.config.configureHTTP
@@ -13,9 +11,7 @@ import openAuthServer.config.configureStatusPages
 import openAuthServer.di.configModule
 import openAuthServer.di.repositoryModule
 import openAuthServer.di.serviceModule
-import openAuthServer.domain.auth.AuthService
 import openAuthServer.domain.auth.authRouting
-import org.koin.core.context.GlobalContext
 import org.koin.ktor.plugin.koin
 import org.koin.logger.slf4jLogger
 
@@ -34,15 +30,7 @@ fun Application.module() {
     configureDatabases() //DB
     configureLogging() //logging
 
-    val authService = GlobalContext.get().get<AuthService>()
-    //routing
     routing {
-        //인증 routing
-        authRouting(authService = authService)
-
-        //test용 routing
-        get("/") {
-            call.respond(mapOf("status" to "OK", "message" to "인증 서버 정상 작동 중"))
-        }
+        authRouting() //인증 routing
     }
 }

@@ -11,9 +11,7 @@ import openAuthServer.domain.auth.JwtService
 import openAuthServer.domain.auth.OAuthGoogleService
 import openAuthServer.domain.auth.OAuthKakaoService
 import openAuthServer.domain.auth.OAuthNaverService
-import openAuthServer.domain.auth.OAuthProvider
 import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.slf4j.LoggerFactory
 
@@ -36,15 +34,9 @@ val serviceModule = module {
         }
     } }
 
-    single {
-        AuthService(
-            repository = get(),
-            jwtService= get(),
-            providers = getAll()
-        )
-    }
     singleOf(::JwtService)
-    singleOf(::OAuthGoogleService) bind OAuthProvider::class
-    singleOf(::OAuthNaverService) bind OAuthProvider::class
-    singleOf(::OAuthKakaoService) bind OAuthProvider::class
+    singleOf(::OAuthGoogleService)
+    singleOf(::OAuthNaverService)
+    singleOf(::OAuthKakaoService)
+    singleOf(::AuthService)
 }
