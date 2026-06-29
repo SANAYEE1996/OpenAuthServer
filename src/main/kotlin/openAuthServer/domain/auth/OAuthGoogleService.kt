@@ -8,6 +8,9 @@ import io.ktor.client.request.get
 import io.ktor.http.parameters
 import openAuthServer.common.OAuthProviderType
 import openAuthServer.config.GoogleOauthConfig
+import org.slf4j.LoggerFactory
+
+private val log = LoggerFactory.getLogger("OAuthGoogleService")
 
 class OAuthGoogleService(
     private val config: GoogleOauthConfig,
@@ -17,6 +20,7 @@ class OAuthGoogleService(
     suspend fun getUserInfo(code: String): OAuthUserInfo {
         val accessResponse = getGoogleAccessResponse(code)
         val userInfoResponse = getGoogleUserInfo(accessResponse.accessToken)
+        log.info("Google 유저 정보 수신 완료 - Email: {}, Name: {}", userInfoResponse.email, userInfoResponse.name)
         return OAuthUserInfo(
             OAuthProviderType.GOOGLE.name,
             userInfoResponse.sub,

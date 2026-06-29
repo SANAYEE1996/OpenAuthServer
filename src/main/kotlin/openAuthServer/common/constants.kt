@@ -10,3 +10,16 @@ enum class OAuthProviderType {
         }
     }
 }
+
+enum class CommonCode {
+    SUCCESS("0000", "성공"),
+    FAIL("9999", "실패");
+
+    val code: String
+    val message: String
+
+    constructor(code: String, message: String) {
+        this.code = code
+        this.message = message
+    }
+}

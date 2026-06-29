@@ -19,12 +19,19 @@ val serviceModule = module {
     single { HttpClient(CIO){
         install(Logging) {
             logger = object : Logger {
-                private val delegate = LoggerFactory.getLogger("HttpClient") // slf4j logger를 Ktor HttpClient에 연결
+                private val log = LoggerFactory.getLogger("HttpClient")
+
                 override fun log(message: String) {
-                    delegate.info(message)
+                    val flattened = message.lineSequence()
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+                        .joinToString(" ")
+                    if (flattened.isNotEmpty()) {
+                        log.info(flattened)
+                    }
                 }
             }
-            level = LogLevel.BODY //로그 레벨 설정 (BODY로 하면 요청/응답 파라미터와 JSON 본문까지 다 로그에 찍힘)
+            level = LogLevel.INFO //로그 레벨 설정 : INFO로 세팅하면 URL과 200 OK/400 BadRequest 상태코드만 찍힙니다. (바디/헤더 노출 X)
         }
 
         install(ContentNegotiation) {
