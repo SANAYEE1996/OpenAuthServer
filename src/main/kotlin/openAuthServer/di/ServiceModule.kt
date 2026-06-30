@@ -31,7 +31,7 @@ val serviceModule = module {
                     }
                 }
             }
-            level = LogLevel.INFO //로그 레벨 설정 : INFO로 세팅하면 URL과 200 OK/400 BadRequest 상태코드만 찍힙니다. (바디/헤더 노출 X)
+            level = LogLevel.BODY //로그 레벨 설정 : INFO로 세팅하면 URL과 200 OK/400 BadRequest 상태코드만 찍힙니다. (바디/헤더 노출 X)
         }
 
         install(ContentNegotiation) {

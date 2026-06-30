@@ -87,3 +87,43 @@ data class NaverOAuthUserInfo(
     @SerialName("birthyear") val birthYear: String? = null,
     @SerialName("mobile") val mobile: String? = null,
 )
+
+@Serializable
+data class KakaoOAuthTokenResponse(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("refresh_token") val refreshToken: String,
+    @SerialName("token_type") val tokenType: String,
+    @SerialName("expires_in") val expiresIn: Int? = null,
+    @SerialName("scope") val scope: String? = null,
+    @SerialName("refresh_token_expires_in") val refreshTokenExpiresIn: Int? = null,
+)
+
+@Serializable
+data class KakaoOAuthUserInfoResponse(
+    @SerialName("id") val id: Long,
+    @SerialName("connected_at") val connectedAt: String,
+    @SerialName("properties") val properties: KakaoOAuthUserProperties,
+    @SerialName("kakao_account") val kakaoAccount: KakaoOAuthUserAccount,
+)
+
+@Serializable
+data class KakaoOAuthUserProperties(
+    @SerialName("nickname") val nickname: String? = null,
+)
+
+@Serializable
+data class KakaoOAuthUserAccount(
+    @SerialName("profile_nickname_needs_agreement") val nickNameAgreement: Boolean? = null,
+    @SerialName("has_email") val hasEmail: Boolean? = null,
+    @SerialName("email_needs_agreement") val emailNeedsAgreement: Boolean? = null,
+    @SerialName("is_email_valid") val isEmailValid: Boolean? = null,
+    @SerialName("is_email_verified") val isEmailVerified: Boolean? = null,
+    @SerialName("email") val email: String,
+    @SerialName("profile") val profile: KakaoOAuthUserProfile,
+)
+
+@Serializable
+data class KakaoOAuthUserProfile(
+    @SerialName("nickname") val nickname: String,
+    @SerialName("is_default_nickname") val isDefaultNickName: Boolean? = null,
+)
