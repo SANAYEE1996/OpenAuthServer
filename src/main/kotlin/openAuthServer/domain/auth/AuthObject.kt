@@ -58,3 +58,32 @@ data class GoogleOAuthUserInfoResponse(
     @SerialName("family_name") val familyName: String? = null,
     @SerialName("locale") val locale: String? = null,
 )
+
+@Serializable
+data class NaverOAuthTokenResponse(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("refresh_token") val refreshToken: String? = null,
+    @SerialName("token_type") val tokenType: String,
+    @SerialName("expires_in") val expiresIn: Long,
+)
+
+@Serializable
+data class NaverOAuthUserInfoResponse(
+    @SerialName("resultcode") val resultCode: String,
+    @SerialName("message") val message: String,
+    @SerialName("response") val userInfo: NaverOAuthUserInfo,
+)
+
+@Serializable
+data class NaverOAuthUserInfo(
+    @SerialName("id") val id: String,
+    @SerialName("email") val email: String,
+    @SerialName("name") val name: String,
+    @SerialName("nickname") val nickname: String? = null,
+    @SerialName("gender") val gender: String? = null,
+    @SerialName("age") val age: String? = null,
+    @SerialName("birthday") val birthday: String? = null,
+    @SerialName("profile_image") val profileImage: String? = null,
+    @SerialName("birthyear") val birthYear: String? = null,
+    @SerialName("mobile") val mobile: String? = null,
+)
