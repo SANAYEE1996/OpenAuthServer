@@ -9,6 +9,7 @@ import io.ktor.server.plugins.ParameterConversionException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
+import openAuthServer.common.CustomException
 import openAuthServer.common.getFailResponse
 import org.slf4j.LoggerFactory
 
@@ -19,6 +20,10 @@ fun Application.configureStatusPages(){
         exception<Exception> { call, cause ->
             log.error("[Server Error] UnExpected Error - Path: {}", call.request.path(), cause)
             call.respond(HttpStatusCode.InternalServerError, getFailResponse(cause.message?:"Unknown Error"))
+        }
+        exception<CustomException> { call, cause ->
+            log.error("[Custom Error] - Path: {}", call.request.path())
+            call.respond(HttpStatusCode.OK, getFailResponse(cause.message, cause.error.code))
         }
         exception<JWTDecodeException>{ call, cause ->
             log.error("[Client Warning] Not Valid Token - Path: {}, Reason: {}", call.request.path(), cause.message)

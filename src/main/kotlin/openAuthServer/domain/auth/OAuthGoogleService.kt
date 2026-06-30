@@ -6,6 +6,8 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.http.parameters
+import openAuthServer.common.CommonCode
+import openAuthServer.common.CustomException
 import openAuthServer.common.OAuthProviderType
 import openAuthServer.config.GoogleOauthConfig
 import org.slf4j.LoggerFactory
@@ -29,8 +31,8 @@ class OAuthGoogleService(
         )
     }
 
-    private suspend fun getGoogleAccessResponse(code: String): GoogleOAuthTokenResponse {
-        return httpClient.submitForm(
+    private suspend fun getGoogleAccessResponse(code: String): GoogleOAuthTokenResponse = try {
+        httpClient.submitForm(
             url = config.tokenUrl,
             formParameters = parameters {
                 append("code", code)
@@ -40,11 +42,17 @@ class OAuthGoogleService(
                 append("grant_type", config.grantType)
             }
         ).body()
+    } catch (e: Exception) {
+        log.error("Google Access Token 요청 실패: ${e.message}")
+        throw CustomException(CommonCode.OAUTH_GOOGLE_TOKEN_NOT_VALID)
     }
 
-    private suspend fun getGoogleUserInfo(accessToken: String): GoogleOAuthUserInfoResponse {
-        return httpClient.get(config.userInfoUrl) {
+    private suspend fun getGoogleUserInfo(accessToken: String): GoogleOAuthUserInfoResponse = try{
+        httpClient.get(config.userInfoUrl) {
             bearerAuth(accessToken)
         }.body()
+    } catch (e: Exception) {
+        log.error("Google User Info 요청 실패: ${e.message}")
+        throw CustomException(CommonCode.OAUTH_GOOGLE_USER_INFO_FAILED)
     }
 }
